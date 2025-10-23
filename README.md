@@ -117,8 +117,6 @@ Create the following 10 Gold Reports (each saved as a Parquet file):
 
 ## 📤 Submission Checklist
 
-**Submit via Canvas:**
-
 ### Parquet Files
 
 **Core Files:**
