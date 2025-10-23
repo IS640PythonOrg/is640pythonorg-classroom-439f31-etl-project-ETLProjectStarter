@@ -24,14 +24,17 @@ jobs:
           pip install -r requirements.txt
 
       - name: Execute Bronze Layer
+        working-directory: ./Notebooks
         run: |
           papermill Bronze_Mario.ipynb bronze_output.ipynb
 
       - name: Execute Silver Layer
+        working-directory: ./Notebooks
         run: |
           papermill Silver_Mario.ipynb silver_output.ipynb
 
       - name: Execute Gold Layer
+        working-directory: ./Notebooks
         run: |
           papermill Gold_Mario.ipynb gold_output.ipynb
 
