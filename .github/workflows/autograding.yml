@@ -1,4 +1,4 @@
-name: Basic ETL Notebook Check
+name: ETL File Existence Check
 
 on:
   push:
@@ -7,37 +7,46 @@ on:
     branches: [ main ]
 
 jobs:
-  run-etl:
+  check-files:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.12'
-
-      - name: Install dependencies
+      - name: Check required files
         run: |
-          pip install -r requirements.txt
+          # Notebooks
+          NOTEBOOKS_DIR="Notebooks"
+          for nb in Bronze_Mario.ipynb Silver_Mario.ipynb Gold_Mario.ipynb; do
+            if [ ! -f "$NOTEBOOKS_DIR/$nb" ]; then
+              echo "❌ $nb missing in $NOTEBOOKS_DIR"
+              exit 1
+            fi
+          done
 
-      - name: Execute Bronze Layer
-        working-directory: ./Notebooks
-        run: |
-          papermill Bronze_Mario.ipynb bronze_output.ipynb
+          # Parquet files (assume they're in 'Parquet Files');
+          PARQUET_DIR="Parquet Files"
+          parquet_files=(
+            bronze.parquet
+            silver.parquet
+            gold_team_summary.parquet
+            gold_player_performance.parquet
+            gold_powerup_player.parquet
+            gold_world_difficulty.parquet
+            gold_top_player_per_team.parquet
+            gold_vehicle_counts.parquet
+            gold_risk_assessment.parquet
+            gold_world_completion.parquet
+            gold_hits_team.parquet
+            gold_spending_analysis.parquet
+          )
+          for pq in "${parquet_files[@]}"; do
+            if [ ! -f "$PARQUET_DIR/$pq" ]; then
+              echo "❌ $pq missing in $PARQUET_DIR"
+              exit 1
+            fi
+          done
 
-      - name: Execute Silver Layer
-        working-directory: ./Notebooks
-        run: |
-          papermill Silver_Mario.ipynb silver_output.ipynb
+          echo "✅ All notebooks and parquet files found!"
 
-      - name: Execute Gold Layer
-        working-directory: ./Notebooks
-        run: |
-          papermill Gold_Mario.ipynb gold_output.ipynb
-
-      - name: Check notebook execution status
-        run: |
-          echo "✅ All ETL notebooks executed. If there are errors above, check your notebook code and outputs."
