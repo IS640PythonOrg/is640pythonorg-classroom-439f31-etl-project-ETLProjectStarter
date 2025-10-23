@@ -1,0 +1,40 @@
+name: Basic ETL Notebook Check
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  run-etl:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Execute Bronze Layer
+        run: |
+          papermill Bronze_Mario.ipynb bronze_output.ipynb
+
+      - name: Execute Silver Layer
+        run: |
+          papermill Silver_Mario.ipynb silver_output.ipynb
+
+      - name: Execute Gold Layer
+        run: |
+          papermill Gold_Mario.ipynb gold_output.ipynb
+
+      - name: Check notebook execution status
+        run: |
+          echo "✅ All ETL notebooks executed. If there are errors above, check your notebook code and outputs."

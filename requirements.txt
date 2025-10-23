@@ -1,0 +1,9 @@
+pandas
+pyarrow
+fastparquet
+numpy
+scikit-learn
+papermill
+matplotlib
+seaborn
+jupyterlab
